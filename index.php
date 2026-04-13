@@ -96,50 +96,25 @@ HTML;
 </header>
 
 <!-- ============================================================
-     HERO SECTION — 3-column layout
+     HERO SECTION — 3-column grid
+     Row 1: [copy A+B] [random C]
+     Row 2: [hero face A] [salad reveal B] [random C cont.]
      ============================================================ -->
 <section class="ff-hero">
     <div class="ff-hero__inner">
 
-        <!-- Col 1–2: Story copy -->
+        <!-- Row 1, Col A+B: Story copy -->
         <div class="ff-hero__story">
             <p class="eyebrow">Food Faces</p>
             <h1>Lunch with a Personality</h1>
             <p>It started with a creative urge and a blank canvas of cottage cheese. One afternoon in January 2010, a salad became a face. The ladies at the checkout registers loved it. So the next day, there was another one.</p>
-            <p>The rules were simple: make a face out of whatever was on the plate, take a picture, post it. The only standing goal was never to repeat a face. Over the next several years, <?= $total_faces ?> faces were made — each one a small, edible portrait that lived for exactly one lunch hour before becoming lunch.</p>
+            <p>The rules were simple: make a face out of whatever was on the plate, take a picture, post it. The only standing goal was never to repeat a face. Over the next several years, <?= $total_faces ?> faces were made — each one a small, edible portrait that lived only long enough to make it to a table before becoming lunch.</p>
             <p>Below is the archive, posted here one face at a time, in the order they were made.</p>
         </div>
 
-        <!-- Col 2 (right of story): Hero face + reveal pair -->
-        <div class="ff-hero__featured">
-            <?php if ($hero): ?>
-            <figure class="ff-hero__face">
-                <img src="<?= img_url($hero['filename']) ?>" alt="<?= face_title($hero) ?>">
-                <figcaption>
-                    <strong><?= face_title($hero) ?></strong>
-                    <?php if (face_caption($hero)): ?>
-                    <span><?= face_caption($hero) ?></span>
-                    <?php endif; ?>
-                </figcaption>
-            </figure>
-            <?php endif; ?>
-
-            <?php if ($reveal): ?>
-            <figure class="ff-hero__reveal">
-                <img src="<?= img_url($reveal['filename']) ?>" alt="<?= face_title($reveal) ?>">
-                <figcaption>
-                    <strong><?= face_title($reveal) ?></strong>
-                    <?php if (face_caption($reveal)): ?>
-                    <span><?= face_caption($reveal) ?></span>
-                    <?php endif; ?>
-                </figcaption>
-            </figure>
-            <?php endif; ?>
-        </div>
-
-        <!-- Col 3: Random face -->
+        <!-- Rows 1+2, Col C: Random face — spans both rows -->
         <div class="ff-hero__random">
-            <p class="eyebrow">Today's Face</p>
+            <p class="eyebrow">Face of the Moment</p>
             <?php if ($random): ?>
             <figure class="ff-hero__random-fig">
                 <img src="<?= img_url($random['filename']) ?>" alt="<?= face_title($random) ?>">
@@ -153,6 +128,32 @@ HTML;
             <?php endif; ?>
             <button class="btn btn-secondary ff-random-btn" id="js-new-random">Another one →</button>
         </div>
+
+        <!-- Row 2, Col A: Hero face -->
+        <?php if ($hero): ?>
+        <figure class="ff-hero__face">
+            <img src="<?= img_url($hero['filename']) ?>" alt="<?= face_title($hero) ?>">
+            <figcaption>
+                <strong><?= face_title($hero) ?></strong>
+                <?php if (face_caption($hero)): ?>
+                <span><?= face_caption($hero) ?></span>
+                <?php endif; ?>
+            </figcaption>
+        </figure>
+        <?php endif; ?>
+
+        <!-- Row 2, Col B: Salad reveal -->
+        <?php if ($reveal): ?>
+        <figure class="ff-hero__reveal">
+            <img src="<?= img_url($reveal['filename']) ?>" alt="<?= face_title($reveal) ?>">
+            <figcaption>
+                <strong><?= face_title($reveal) ?></strong>
+                <?php if (face_caption($reveal)): ?>
+                <span><?= face_caption($reveal) ?></span>
+                <?php endif; ?>
+            </figcaption>
+        </figure>
+        <?php endif; ?>
 
     </div><!-- /.ff-hero__inner -->
 </section>
