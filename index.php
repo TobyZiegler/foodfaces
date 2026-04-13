@@ -23,14 +23,23 @@ $random = $pdo->query("
     LIMIT 1
 ")->fetch(PDO::FETCH_ASSOC);
 
-// Gallery — all keepers in sort_order, excluding hero/reveal/other
-$gallery_stmt = $pdo->query("
+// Gallery — paginated, excluding reveal/other/excluded
+$gallery_page = max(1, (int) ($_GET['p'] ?? 1));
+$gallery_offset = ($gallery_page - 1) * PAGE_SIZE;
+
+$total_faces = (int) $pdo->query("
+    SELECT COUNT(*) FROM foodfaces
+    WHERE face_type NOT IN ('foodface_reveal', 'other', 'excluded')
+")->fetchColumn();
+
+$total_pages = (int) ceil($total_faces / PAGE_SIZE);
+
+$gallery = $pdo->query("
     SELECT * FROM foodfaces
-    WHERE face_type NOT IN ('foodface_reveal', 'other')
+    WHERE face_type NOT IN ('foodface_reveal', 'other', 'excluded')
     ORDER BY sort_order ASC
-");
-$gallery = $gallery_stmt->fetchAll(PDO::FETCH_ASSOC);
-$total_faces = count($gallery);
+    LIMIT " . PAGE_SIZE . " OFFSET $gallery_offset
+")->fetchAll(PDO::FETCH_ASSOC);
 
 // -- Helpers --------------------------------------------------
 
@@ -187,27 +196,23 @@ HTML;
         <h2>All <?= $total_faces ?> Faces</h2>
 
         <div class="ff-gallery__grid" id="js-gallery">
-            <?php
-            $shown = 0;
-            foreach ($gallery as $i => $row):
-                if ($shown >= PAGE_SIZE): ?>
-                    <div class="ff-gallery__hidden" style="display:none">
-                    <?php
-                    // remaining cards go inside hidden wrapper; JS reveals them
-                endif;
-                echo gallery_card($row, $i);
-                $shown++;
-            endforeach;
-            if ($total_faces > PAGE_SIZE): ?>
-                </div><!-- /.ff-gallery__hidden -->
-            <?php endif; ?>
+            <?php foreach ($gallery as $i => $row): ?>
+                <?php echo gallery_card($row, ($gallery_page - 1) * PAGE_SIZE + $i); ?>
+            <?php endforeach; ?>
         </div>
 
-        <?php if ($total_faces > PAGE_SIZE): ?>
-        <div class="ff-gallery__more">
-            <button class="btn btn-secondary" id="js-load-more">
-                Show more <span id="js-remaining"><?= $total_faces - PAGE_SIZE ?></span> faces
-            </button>
+        <?php if ($total_pages > 1): ?>
+        <div class="ff-gallery__pagination">
+            <?php if ($gallery_page > 1): ?>
+                <a href="?p=<?= $gallery_page - 1 ?>" class="btn btn-secondary">← Prev</a>
+            <?php endif; ?>
+            <span class="ff-gallery__page-info">
+                Page <?= $gallery_page ?> of <?= $total_pages ?>
+                &nbsp;&mdash;&nbsp; <?= $total_faces ?> faces total
+            </span>
+            <?php if ($gallery_page < $total_pages): ?>
+                <a href="?p=<?= $gallery_page + 1 ?>" class="btn btn-secondary">Next →</a>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 
