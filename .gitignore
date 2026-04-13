@@ -1,0 +1,56 @@
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Credentials — never commit these
+db.php
+
+
+# Database schema — run manually, never auto-deploy
+# (Uncomment to keep setup.sql out of git entirely; or leave it tracked for docs)
+setup.sql
+setup_admin.php
+schema.sql
+
+# facebook and misc files
+construction_files/
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# VisualStudioCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history
+
+# end file
+db.php

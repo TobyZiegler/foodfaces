@@ -1,0 +1,301 @@
+/* ============================================================
+   Food Faces — style.css
+   projects.tobyziegler.com/foodfaces/
+   Depends on: https://tobyziegler.com/assets/shared.css (v2.4)
+   ============================================================ */
+
+
+/* ============================================================
+   HERO — 3-column layout
+   ============================================================ */
+
+.ff-hero {
+    padding: var(--pad-page);
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    background: var(--bg-warm);
+}
+
+.ff-hero__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+/* Story copy — spans full height of col 1-2 */
+.ff-hero__story h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.ff-hero__story p {
+    color: var(--text-body);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+/* Featured pair: hero face (left) + reveal (right) stacked vertically */
+.ff-hero__featured {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ff-hero__face,
+.ff-hero__reveal,
+.ff-hero__random-fig {
+    margin: 0;
+}
+
+.ff-hero__face img,
+.ff-hero__reveal img,
+.ff-hero__random-fig img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
+
+.ff-hero__face figcaption,
+.ff-hero__reveal figcaption,
+.ff-hero__random-fig figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.ff-hero__face figcaption strong,
+.ff-hero__reveal figcaption strong,
+.ff-hero__random-fig figcaption strong {
+    display: block;
+    color: var(--text-body);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+}
+
+.ff-hero__face figcaption span,
+.ff-hero__reveal figcaption span,
+.ff-hero__random-fig figcaption span {
+    display: block;
+}
+
+/* Random col */
+.ff-hero__random .eyebrow {
+    margin-bottom: 0.75rem;
+}
+
+.ff-random-btn {
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+/* Responsive: collapse to 1-col on mobile */
+@media (max-width: 768px) {
+    .ff-hero__inner {
+        grid-template-columns: 1fr;
+    }
+
+    .ff-hero__featured {
+        flex-direction: row;
+    }
+
+    .ff-hero__featured figure {
+        flex: 1;
+    }
+}
+
+
+/* ============================================================
+   SHARE CARD SECTION
+   ============================================================ */
+
+.ff-share {
+    padding: var(--pad-page);
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    background: var(--bg-dark);
+}
+
+.ff-share__inner {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.ff-share__inner h2 {
+    color: var(--text-light);
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+}
+
+.ff-share__sub {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* The rendered share card */
+.ff-share__card {
+    background: var(--bg-warm);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.ff-share__card-img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    display: block;
+}
+
+.ff-share__card-body {
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+.ff-share__card-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+}
+
+.ff-share__card-caption {
+    font-size: 0.9rem;
+    color: var(--text-body);
+    line-height: 1.55;
+    margin-bottom: 0.75rem;
+}
+
+.ff-share__card-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.ff-share__card-link {
+    color: var(--green);
+    text-decoration: none;
+}
+
+.ff-share__card-link:hover {
+    text-decoration: underline;
+}
+
+.ff-share__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+/* ============================================================
+   GALLERY
+   ============================================================ */
+
+.ff-gallery {
+    padding: var(--pad-page);
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+}
+
+.ff-gallery__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ff-gallery__inner h2 {
+    font-weight: 300;
+    margin-bottom: 1.75rem;
+    color: var(--text-dark);
+}
+
+.ff-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+/* Individual card */
+.ff-card {
+    background: var(--bg-warm);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    animation: cardIn 0.3s ease both;
+}
+
+.ff-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.13);
+}
+
+.ff-card__img-wrap {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--bg-mid);
+}
+
+.ff-card__img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Paired set badge (A, B, C…) */
+.pair-badge {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    background: var(--green);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.ff-card__body {
+    padding: 0.65rem 0.75rem 0.75rem;
+}
+
+.ff-card__title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.ff-card__caption {
+    font-size: 0.82rem;
+    color: var(--text-body);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Load more */
+.ff-gallery__more {
+    text-align: center;
+    margin-top: 2rem;
+}
