@@ -6,7 +6,7 @@
 require_once __DIR__ . '/db.php';   // gitignored; create manually on server
 
 // -- Config ---------------------------------------------------
-define('IMAGES_PATH', '/foodfaces/photos/');   // relative URL base for images
+define('IMAGES_PATH', 'photos/');   // relative to index.php — works on Herd and production
 define('PAGE_SIZE', 12);                        // cards per gallery load
 
 // -- Queries --------------------------------------------------
@@ -105,7 +105,7 @@ HTML;
         <div class="ff-hero__story">
             <p class="eyebrow">Food Faces</p>
             <h1>Lunch with a Personality</h1>
-            <p>It started with boredom and a blank canvas of cottage cheese. One afternoon in January 2010, a salad became a face. The ladies at the checkout registers loved it. So the next day, there was another one.</p>
+            <p>It started with a creative urge and a blank canvas of cottage cheese. One afternoon in January 2010, a salad became a face. The ladies at the checkout registers loved it. So the next day, there was another one.</p>
             <p>The rules were simple: make a face out of whatever was on the plate, take a picture, post it. The only standing goal was never to repeat a face. Over the next several years, <?= $total_faces ?> faces were made — each one a small, edible portrait that lived for exactly one lunch hour before becoming lunch.</p>
             <p>Below is the archive, posted here one face at a time, in the order they were made.</p>
         </div>
