@@ -65,8 +65,8 @@ while (($row = fgetcsv($fh)) !== false) {
     }
     $face_date = $dt ? $dt->format('Y-m-d') : '2010-01-01';
 
-    // Caption fallback: use caption_edit if present, else empty string
-    $caption = trim($data['caption_edit'] ?? '');
+    // Caption from curated column
+    $caption = trim($data['caption'] ?? '');
 
     $sort++;
 
@@ -74,7 +74,7 @@ while (($row = fgetcsv($fh)) !== false) {
         ':filename'             => trim($data['filename']),
         ':original_timestamp'   => (int) trim($data['timestamp']),
         ':face_date'            => $face_date,
-        ':title'                => trim($data['description']),
+        ':title'                => trim($data['title'] ?? ''),
         ':caption'              => $caption,
         ':face_type'            => trim($data['type']) ?: 'foodface',
         ':construction_date'    => trim($data['construction_date'] ?? ''),

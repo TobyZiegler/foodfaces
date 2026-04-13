@@ -53,7 +53,8 @@ function gallery_card($row, $index) {
     $title   = face_title($row);
     $src     = img_url($row['filename']);
     $is_pair = strpos($row['face_type'], ',') !== false; // e.g. "foodface,A"
-    $pair_label = $is_pair ? '<span class="pair-badge">' . htmlspecialchars(substr($row['face_type'], strpos($row['face_type'], ',') + 1)) . '</span>' : '';
+    $pair_label   = $is_pair ? '<span class="pair-badge">' . htmlspecialchars(substr($row['face_type'], strpos($row['face_type'], ',') + 1)) . '</span>' : '';
+    $caption_html = $caption ? '<p class="ff-card__caption">' . $caption . '</p>' : '';
 
     return <<<HTML
     <article class="ff-card" data-index="{$index}">
@@ -63,7 +64,7 @@ function gallery_card($row, $index) {
         </div>
         <div class="ff-card__body">
             <p class="ff-card__title">{$title}</p>
-            {$caption ? '<p class="ff-card__caption">' . $caption . '</p>' : ''}
+            {$caption_html}
         </div>
     </article>
 HTML;
