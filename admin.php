@@ -109,7 +109,10 @@ $type_options = [
      ============================================================ -->
 <div class="ffa-login-wrap">
     <div class="ffa-login-card">
-        <p class="eyebrow">Food Faces</p>
+        <div class="eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">Food Faces</span>
+        </div>
         <h1>Admin</h1>
         <?php if (isset($login_error)): ?>
             <p class="ffa-error"><?= htmlspecialchars($login_error) ?></p>
@@ -129,14 +132,15 @@ $type_options = [
 <!-- ============================================================
      ADMIN PANEL
      ============================================================ -->
-<header class="ffa-header">
-    <div class="ffa-header__inner">
-        <span class="ffa-header__title">Food Faces — Admin</span>
-        <nav class="ffa-header__nav">
-            <a href="index.php">View Site</a>
-            <a href="?logout=1">Sign Out</a>
-        </nav>
-    </div>
+<header class="site-header">
+    <a href="index.php" class="logo">
+        <span class="room-name">Food Faces</span>
+        <span class="logo-badge">Admin</span>
+    </a>
+    <nav class="header-nav">
+        <a href="index.php" class="nav-link">View Site</a>
+        <a href="?logout=1" class="nav-link">Sign Out</a>
+    </nav>
 </header>
 
 <main class="ffa-main">

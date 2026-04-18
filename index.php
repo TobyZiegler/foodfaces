@@ -94,14 +94,15 @@ HTML;
      SITE HEADER
      ============================================================ -->
 <header class="site-header">
-    <div class="site-header__inner">
-        <a class="site-header__home" href="https://tobyziegler.com">Toby's Study</a>
-        <nav class="site-header__nav">
-            <a href="https://projects.tobyziegler.com">Projects</a>
-            <a href="https://dadabase.tobyziegler.com">Dad-a-Base</a>
-            <a href="https://resume.tobyziegler.com">Résumé</a>
-        </nav>
-    </div>
+    <a href="https://tobyziegler.com" class="logo">
+        <span class="room-name">Food Faces</span>
+    </a>
+    <nav class="header-nav">
+        <a href="https://tobyziegler.com" class="nav-link">The Study</a>
+        <a href="https://projects.tobyziegler.com" class="nav-link">Projects</a>
+        <a href="https://dadabase.tobyziegler.com" class="nav-link">Dad-a-Base</a>
+        <a href="https://resume.tobyziegler.com" class="nav-link">Résumé</a>
+    </nav>
 </header>
 
 <!-- ============================================================
@@ -114,8 +115,11 @@ HTML;
 
         <!-- Row 1, Col A+B: Story copy -->
         <div class="ff-hero__story">
-            <p class="eyebrow">Food Faces</p>
-            <h1>Lunch with a Personality</h1>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                <span class="eyebrow-text">Food Faces</span>
+            </div>
+            <h1 class="green">Lunch with a Personality</h1>
             <p>It started with a creative urge and a blank canvas of cottage cheese. One afternoon in January 2010, a salad became a face. The ladies at the checkout registers loved it. So the next day, there was another one.</p>
             <p>The rules were simple: make a face out of whatever was on the plate, take a picture, post it. The only standing goal was never to repeat a face. Over the next several years, <?= $total_faces ?> faces were made — each one a small, edible portrait that lived only long enough to make it to a table before becoming lunch.</p>
             <p>Below is the archive, posted here one face at a time, in the order they were made.</p>
@@ -123,7 +127,10 @@ HTML;
 
         <!-- Rows 1+2, Col C: Random face — spans both rows -->
         <div class="ff-hero__random">
-            <p class="eyebrow">Face of the Moment</p>
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                <span class="eyebrow-text">Face of the Moment</span>
+            </div>
             <?php if ($random): ?>
             <figure class="ff-hero__random-fig">
                 <img src="<?= img_url($random['filename']) ?>" alt="<?= face_title($random) ?>">
@@ -172,7 +179,10 @@ HTML;
      ============================================================ -->
 <section class="ff-share">
     <div class="ff-share__inner">
-        <p class="eyebrow">Daily Post</p>
+        <div class="eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">Daily Post</span>
+        </div>
         <h2>Today's Share Card</h2>
         <p class="ff-share__sub">Copy or download — then post to Facebook or LinkedIn.</p>
 
@@ -192,7 +202,10 @@ HTML;
      ============================================================ -->
 <section class="ff-gallery">
     <div class="ff-gallery__inner">
-        <p class="eyebrow">The Archive</p>
+        <div class="eyebrow">
+            <span class="eyebrow-line"></span>
+            <span class="eyebrow-text">The Archive</span>
+        </div>
         <h2>All <?= $total_faces ?> Faces</h2>
 
         <div class="ff-gallery__grid" id="js-gallery">
@@ -220,12 +233,18 @@ HTML;
 </section>
 
 <!-- ============================================================
-     SITE FOOTER
+     SITE FOOTER — standard bookshelf pattern
      ============================================================ -->
 <footer class="site-footer">
-    <div class="site-footer__inner">
-        <p>Food Faces &mdash; Toby Ziegler &mdash; <a href="https://tobyziegler.com">tobyziegler.com</a></p>
+    <div>
+        <span class="room-name">Food Faces</span>
+        <span class="tagline">Every face was lunch.</span>
     </div>
+    <nav class="footer-nav">
+        <a href="admin.php" class="footer-link">Admin</a>
+        <a href="https://tobyziegler.com" class="footer-link">Toby's Study</a>
+        <a href="https://projects.tobyziegler.com" class="footer-link">All Projects</a>
+    </nav>
 </footer>
 
 <!-- ============================================================
