@@ -198,28 +198,48 @@ HTML;
 </section>
 
 <!-- ============================================================
-     TODAY'S FACE + SHARE CARD
+     SHARE CARDS - today's face + face of the moment
      ============================================================ -->
 <section class="ff-share">
     <div class="ff-share__inner">
         <div class="eyebrow">
             <span class="eyebrow-line"></span>
-            <span class="eyebrow-text">Today's Face</span>
+            <span class="eyebrow-text">Daily Post</span>
         </div>
-        <h2>Today's Share Card</h2>
+        <h2>Share a Face</h2>
         <p class="ff-share__sub">Copy or download - then post to Facebook or LinkedIn.</p>
 
-        <?php if (!$today): ?>
-        <p class="ff-share__no-today">No face has been set for today. Visit the <a href="admin.php">admin panel</a> to set one.</p>
-        <?php else: ?>
-        <div class="ff-share__card" id="js-share-card">
-            <!-- Populated by JS from FF_TODAY -->
-        </div>
-        <div class="ff-share__actions">
-            <button class="btn btn-primary" id="js-copy-card">Copy image</button>
-            <button class="btn btn-secondary" id="js-download-card">Download</button>
-        </div>
-        <?php endif; ?>
+        <div class="ff-share__cards">
+
+            <!-- Left card: today's face, admin-set -->
+            <div class="ff-share__col">
+                <p class="ff-share__col-label">Today's Face</p>
+                <?php if (!$today): ?>
+                <p class="ff-share__no-today">No face set for today. Visit the <a href="admin.php">admin panel</a> to set one.</p>
+                <?php else: ?>
+                <div class="ff-share__card" id="js-share-card-today">
+                    <!-- Populated by JS from FF_TODAY -->
+                </div>
+                <div class="ff-share__actions">
+                    <button class="btn btn-primary" id="js-copy-today">Copy image</button>
+                    <button class="btn btn-secondary" id="js-download-today">Download</button>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Right card: face of the moment, randomized on load; updates with "Another one" -->
+            <div class="ff-share__col">
+                <p class="ff-share__col-label">Face of the Moment</p>
+                <div class="ff-share__card" id="js-share-card-random">
+                    <!-- Populated by JS from FF_RANDOM_CURRENT -->
+                </div>
+                <div class="ff-share__actions">
+                    <button class="btn btn-primary" id="js-copy-random">Copy image</button>
+                    <button class="btn btn-secondary" id="js-download-random">Download</button>
+                </div>
+            </div>
+
+        </div><!-- /.ff-share__cards -->
     </div>
 </section>
 
