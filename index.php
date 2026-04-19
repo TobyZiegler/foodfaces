@@ -3,6 +3,9 @@
 // Food Faces - projects.tobyziegler.com/foodfaces/index.php
 // ============================================================
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/db.php';   // gitignored; create manually on server
 
 // -- Config ---------------------------------------------------
