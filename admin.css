@@ -1,5 +1,5 @@
 /* ============================================================
-   Food Faces — admin.css
+   Food Faces - admin.css
    Admin panel styles only. Depends on shared.css v2.4.
    ============================================================ */
 
@@ -32,13 +32,13 @@
 
 .ffa-error {
     color: var(--burg);
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     margin-bottom: 1rem;
 }
 
 .ffa-back {
     margin-top: 1.5rem;
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     text-align: center;
 }
 
@@ -88,7 +88,7 @@
     padding: 0.3rem 0.85rem;
     border-radius: var(--radius-pill);
     border: 1.5px solid var(--rule);
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     color: var(--text-muted);
     text-decoration: none;
     transition: var(--transition);
@@ -106,7 +106,7 @@
 }
 
 .ffa-count {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     color: var(--text-muted);
 }
 
@@ -115,13 +115,19 @@
     color: var(--green);
     border-radius: var(--radius-sm);
     padding: 0.6rem 1rem;
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     margin-bottom: 1rem;
+}
+
+.ffa-flash--today {
+    background: rgba(123, 45, 58, 0.08);   /* --burg at 8% */
+    color: var(--burg);
 }
 
 
 /* ============================================================
    FACE ROW
+   4-column grid: thumb | edit form | side actions
    ============================================================ */
 
 .ffa-row {
@@ -146,8 +152,18 @@
     background: var(--bg-alt);
 }
 
+/* Today's face - green left border accent */
+.ffa-row--today {
+    border-color: var(--green);
+}
+
+.ffa-row--today:hover {
+    border-color: var(--green);
+}
+
 /* Thumbnail */
 .ffa-thumb {
+    position: relative;
     width: 120px;
     height: 120px;
     border-radius: var(--radius-sm);
@@ -162,6 +178,22 @@
     display: block;
 }
 
+/* "Today" badge overlaid on thumbnail */
+.ffa-today-badge {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--green);
+    color: var(--white-soft);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-align: center;
+    padding: 0.2rem 0;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
 /* Meta line */
 .ffa-meta {
     display: flex;
@@ -172,18 +204,18 @@
 }
 
 .ffa-sort {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .ffa-date {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     color: var(--text-muted);
 }
 
 .ffa-filename {
-    font-size: var(--text-xs);   /* page-specific — monospace filename; no shared token applies */
+    font-size: var(--text-sm);   /* page-specific - monospace filename; no shared token applies */
     color: var(--text-muted);
     font-family: monospace;
 }
@@ -202,7 +234,7 @@
 }
 
 .ffa-field-group label {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -212,7 +244,7 @@
 .ffa-field-group input[type="text"],
 .ffa-field-group textarea,
 .ffa-field-group select {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     padding: 0.4rem 0.6rem;
     border: 1.5px solid var(--rule);
     border-radius: var(--radius-sm);
@@ -256,15 +288,41 @@
     white-space: nowrap;
 }
 
-/* Exclude button */
-.ffa-exclude-form {
+/* Side action buttons column - Set Today + Exclude/Restore stacked */
+.ffa-side-actions {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
     padding-top: 0.25rem;
 }
 
+.ffa-today-btn {
+    font-size: var(--text-sm);
+    padding: 0.35rem 0.75rem;
+    white-space: nowrap;
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.ffa-today-btn:hover {
+    background: var(--green);
+    color: var(--white-soft);
+    border-color: var(--green);
+}
+
+/* Static label shown instead of button when this row is already today's face */
+.ffa-today-label {
+    font-size: var(--text-sm);
+    color: var(--green);
+    font-weight: 600;
+    padding: 0.35rem 0;
+    white-space: nowrap;
+}
+
+/* Exclude button */
 .ffa-exclude-btn {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     padding: 0.35rem 0.75rem;
     white-space: nowrap;
 }
@@ -294,7 +352,7 @@
 }
 
 .ffa-page-info {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     color: var(--text-muted);
 }
 
@@ -314,7 +372,10 @@
         height: 80px;
     }
 
-    .ffa-exclude-form {
+    .ffa-side-actions {
         grid-column: 1 / -1;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
     }
 }

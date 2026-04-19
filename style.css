@@ -1,12 +1,12 @@
 /* ============================================================
-   Food Faces — style.css
+   Food Faces - style.css
    projects.tobyziegler.com/foodfaces/
    Depends on: https://tobyziegler.com/assets/shared.css (v2.4)
    ============================================================ */
 
 
 /* ============================================================
-   HERO — 3-column layout
+   HERO - 3-column layout
    ============================================================ */
 
 .ff-hero {
@@ -15,9 +15,10 @@
     padding-bottom: 3rem;
 }
 
-/* 3-equal-column grid, 2 rows:
-   Row 1: story spans col A+B | random occupies col C
-   Row 2: hero face col A | reveal col B | random col C (continued) */
+/* 3-column grid, 2 rows:
+   Row 1, col 1-2: story copy
+   Row 1-2, col 3: random face (spans both rows)
+   Row 2, col 1-2: pair explanation + both figures side by side */
 .ff-hero__inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -28,35 +29,47 @@
     align-items: start;
 }
 
-/* Row 1 col A+B */
+/* Row 1, col 1+2 */
 .ff-hero__story {
     grid-column: 1 / 3;
     grid-row: 1;
 }
 
-/* Col C rows 1+2 — random face, top-aligned */
+/* Row 1+2, col 3 - spans both rows */
 .ff-hero__random {
     grid-column: 3;
     grid-row: 1 / 3;
     align-self: start;
 }
 
-/* Row 2 col A */
-.ff-hero__face {
-    grid-column: 1;
+/* Row 2, col 1+2 - pair explanation + both figures */
+.ff-hero__pair-row {
+    grid-column: 1 / 3;
     grid-row: 2;
-    margin: 0;
 }
 
-/* Row 2 col B */
+.ff-hero__pair-note {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+}
+
+/* Two figures side by side across the full pair-row width */
+.ff-hero__pair-figures {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.ff-hero__face,
 .ff-hero__reveal {
-    grid-column: 2;
-    grid-row: 2;
     margin: 0;
 }
 
-/* Story copy — h1 color handled by class="green" in HTML;
-   margin override only, no size or weight change */
+/* Story copy - h1 color handled by class="green" in HTML */
 .ff-hero__story h1 {
     margin-bottom: 1rem;
 }
@@ -127,31 +140,26 @@
 
     .ff-hero__story,
     .ff-hero__random,
-    .ff-hero__face,
-    .ff-hero__reveal {
+    .ff-hero__pair-row {
         grid-column: 1;
         grid-row: auto;
     }
 
-    .ff-hero__face,
-    .ff-hero__reveal {
-        display: inline-block;
-        width: calc(50% - 0.5rem);
-        vertical-align: top;
+    .ff-hero__pair-figures {
+        grid-template-columns: 1fr 1fr;   /* keep side by side even on mobile - they're paired */
     }
 }
 
 
 /* ============================================================
    SHARE CARD SECTION
-   Alternating section — parchment overlay, same as Study #process
    ============================================================ */
 
 .ff-share {
     padding: var(--pad-page);
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
-    background: rgba(44, 31, 20, 0.1);
+    background: rgba(44, 31, 20, 0.1);   /* alternating section - parchment overlay */
 }
 
 .ff-share__inner {
@@ -169,6 +177,23 @@
     color: var(--text-muted);
     margin-bottom: 1.5rem;
     font-size: var(--text-sm);
+}
+
+/* Shown when no today face is set - links to admin */
+.ff-share__no-today {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 2rem 0;
+}
+
+.ff-share__no-today a {
+    color: var(--green);
+    text-decoration: none;
+}
+
+.ff-share__no-today a:hover {
+    text-decoration: underline;
 }
 
 /* The rendered share card */
@@ -247,6 +272,7 @@
 .ff-gallery__inner h2 {
     font-weight: 300;
     margin-bottom: 1.75rem;
+    color: var(--text);
 }
 
 .ff-gallery__grid {
@@ -290,7 +316,7 @@
     top: 0.4rem;
     right: 0.4rem;
     background: var(--green);
-    color: var(--white-soft);
+    color: #fff;
     font-size: var(--text-sm);
     font-weight: 700;
     letter-spacing: 0.05em;

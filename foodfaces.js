@@ -1,18 +1,18 @@
 // ============================================================
-// Food Faces — foodfaces.js
+// Food Faces - foodfaces.js
 // ============================================================
 
 (function() {
 
     // -- Random face ------------------------------------------
 
-    var randomSection = document.querySelector('.ff-hero__random');
-    var randomFig     = document.querySelector('.ff-hero__random-fig');
-    var newRandomBtn  = document.getElementById('js-new-random');
+    var randomFig    = document.querySelector('.ff-hero__random-fig');
+    var newRandomBtn = document.getElementById('js-new-random');
 
     var currentRandom = FF_RANDOM_CURRENT;
 
     function renderRandomFig(face) {
+        if (!randomFig) return;
         var caption = face.caption ? '<span>' + escHtml(face.caption) + '</span>' : '';
         randomFig.innerHTML =
             '<img src="' + FF_IMAGES_PATH + escHtml(face.filename) + '" alt="' + escHtml(face.title) + '">' +
@@ -20,7 +20,6 @@
                 '<strong>' + escHtml(face.title) + '</strong>' +
                 caption +
             '</figcaption>';
-        renderShareCard(face);
     }
 
     if (newRandomBtn) {
@@ -38,12 +37,12 @@
     }
 
 
-    // -- Share card -------------------------------------------
+    // -- Share card (today's face) ----------------------------
 
     var shareCard = document.getElementById('js-share-card');
 
     function renderShareCard(face) {
-        if (!shareCard) return;
+        if (!shareCard || !face) return;
         var caption = face.caption || '';
         shareCard.innerHTML =
             '<img class="ff-share__card-img" src="' + FF_IMAGES_PATH + escHtml(face.filename) + '" alt="' + escHtml(face.title) + '">' +
@@ -51,29 +50,33 @@
                 '<p class="ff-share__card-title">' + escHtml(face.title) + '</p>' +
                 (caption ? '<p class="ff-share__card-caption">' + escHtml(caption) + '</p>' : '') +
                 '<p class="ff-share__card-meta">' +
-                    'Food Faces &mdash; an archive of edible portraits &mdash; ' +
+                    'Food Faces - an archive of edible portraits - ' +
                     '<a class="ff-share__card-link" href="https://projects.tobyziegler.com/foodfaces/" target="_blank">' +
                     'projects.tobyziegler.com/foodfaces</a>' +
                 '</p>' +
             '</div>';
     }
 
-    // Initialize share card with the PHP-rendered random face
-    if (FF_RANDOM_CURRENT) {
-        renderShareCard(FF_RANDOM_CURRENT);
+    // Initialize share card with today's face
+    if (FF_TODAY) {
+        renderShareCard(FF_TODAY);
     }
 
-    // Copy card as image using html2canvas (CDN-loaded below if available)
+
+    // -- Copy / Download (html2canvas) ------------------------
+
     var copyBtn     = document.getElementById('js-copy-card');
     var downloadBtn = document.getElementById('js-download-card');
 
     function captureCard(callback) {
         if (typeof html2canvas === 'undefined') {
-            alert('Image capture not available. Try the Download button.');
+            alert('Image capture not available - try the Download button.');
             return;
         }
         html2canvas(shareCard, { useCORS: true, scale: 2 }).then(function(canvas) {
             callback(canvas);
+        }).catch(function() {
+            alert('Capture failed. The image may be blocked by CORS. Try Download instead.');
         });
     }
 
@@ -81,6 +84,10 @@
         copyBtn.addEventListener('click', function() {
             captureCard(function(canvas) {
                 canvas.toBlob(function(blob) {
+                    if (!navigator.clipboard || !navigator.clipboard.write) {
+                        alert('Clipboard API not available in this browser. Try Download instead.');
+                        return;
+                    }
                     var item = new ClipboardItem({ 'image/png': blob });
                     navigator.clipboard.write([item]).then(function() {
                         copyBtn.textContent = 'Copied!';
@@ -96,8 +103,9 @@
     if (downloadBtn) {
         downloadBtn.addEventListener('click', function() {
             captureCard(function(canvas) {
+                var filename = FF_TODAY ? 'foodface-' + escHtml(FF_TODAY.filename) + '.png' : 'foodface-share.png';
                 var link = document.createElement('a');
-                link.download = 'foodface-' + (currentRandom.filename || 'share') + '.png';
+                link.download = filename;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
@@ -109,11 +117,9 @@
 
     var loadMoreBtn   = document.getElementById('js-load-more');
     var hiddenWrapper = document.querySelector('.ff-gallery__hidden');
-    var remainingSpan = document.getElementById('js-remaining');
 
     if (loadMoreBtn && hiddenWrapper) {
         loadMoreBtn.addEventListener('click', function() {
-            // Move all hidden cards into the grid
             var grid = document.getElementById('js-gallery');
             while (hiddenWrapper.firstChild) {
                 grid.appendChild(hiddenWrapper.firstChild);

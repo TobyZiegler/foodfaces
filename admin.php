@@ -1,14 +1,14 @@
 <?php
 // ============================================================
-// Food Faces — admin.php
+// Food Faces - admin.php
 // projects.tobyziegler.com/foodfaces/admin.php
-// Simple session-based password auth — no DB table needed.
+// Simple session-based password auth - no DB table needed.
 // ============================================================
 
 session_start();
 require_once __DIR__ . '/db.php';
 
-// -- Auth config — change this password ----------------------
+// -- Auth config - change this password ----------------------
 define('ADMIN_PASSWORD', 'Just4dafaces!');
 
 // -- Auth handling -------------------------------------------
@@ -40,7 +40,15 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $saved_id = $id;
     }
 
-    // Exclude (soft-delete) a face — set type to 'excluded'
+    // Set today's face
+    if (isset($_POST['action']) && $_POST['action'] === 'set_today') {
+        $id = (int) $_POST['id'];
+        $stmt = $pdo->prepare("UPDATE ff_settings SET setting_value=? WHERE setting_key='today_face_id'");
+        $stmt->execute([$id]);
+        $today_set_id = $id;
+    }
+
+    // Exclude (soft-delete) a face - set type to 'excluded'
     if (isset($_POST['action']) && $_POST['action'] === 'exclude') {
         $id = (int) $_POST['id'];
         $pdo->prepare("UPDATE foodfaces SET face_type='excluded' WHERE id=?")->execute([$id]);
@@ -53,12 +61,17 @@ if ($authed && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// -- Today's face ID -----------------------------------------
+$today_face_id = (int) $pdo->query("
+    SELECT setting_value FROM ff_settings WHERE setting_key = 'today_face_id'
+")->fetchColumn();
+
 // -- Pagination ----------------------------------------------
 $page     = max(1, (int) ($_GET['p'] ?? 1));
 $per_page = 20;
 $offset   = ($page - 1) * $per_page;
 
-$filter   = $_GET['filter'] ?? 'all';   // all | excluded | foodface_hero | foodface_reveal
+$filter = $_GET['filter'] ?? 'all';   // all | excluded | foodface_hero | foodface_reveal
 
 $where = match($filter) {
     'excluded'         => "WHERE face_type = 'excluded'",
@@ -78,17 +91,17 @@ $rows = $pdo->query("
 
 // Valid face_type options for the select
 $type_options = [
-    'foodface'         => 'foodface',
-    'foodface_hero'    => 'foodface_hero',
-    'foodface_reveal'  => 'foodface_reveal',
-    'foodface,A'       => 'foodface,A',
-    'foodface,B'       => 'foodface,B',
-    'foodface,C'       => 'foodface,C',
-    'foodface,D'       => 'foodface,D',
-    'foodface,E'       => 'foodface,E',
-    'foodface,F'       => 'foodface,F',
-    'other'            => 'other',
-    'excluded'         => 'excluded',
+    'foodface'        => 'foodface',
+    'foodface_hero'   => 'foodface_hero',
+    'foodface_reveal' => 'foodface_reveal',
+    'foodface,A'      => 'foodface,A',
+    'foodface,B'      => 'foodface,B',
+    'foodface,C'      => 'foodface,C',
+    'foodface,D'      => 'foodface,D',
+    'foodface,E'      => 'foodface,E',
+    'foodface,F'      => 'foodface,F',
+    'other'           => 'other',
+    'excluded'        => 'excluded',
 ];
 
 ?><!DOCTYPE html>
@@ -96,7 +109,7 @@ $type_options = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin — Food Faces</title>
+    <title>Admin - Food Faces</title>
     <link rel="stylesheet" href="https://tobyziegler.com/assets/shared.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin.css">
@@ -122,9 +135,9 @@ $type_options = [
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" autofocus autocomplete="current-password">
             </div>
-            <button type="submit" class="btn btn-primary ffa-btn-full">Enter →</button>
+            <button type="submit" class="btn btn-primary ffa-btn-full">Enter &rarr;</button>
         </form>
-        <p class="ffa-back"><a href="index.php">← Back to Food Faces</a></p>
+        <p class="ffa-back"><a href="index.php">&larr; Back to Food Faces</a></p>
     </div>
 </div>
 
@@ -156,23 +169,31 @@ $type_options = [
             <a href="?filter=<?= $key ?>" class="ffa-filter<?= $active ?>"><?= $label ?></a>
             <?php endforeach ?>
         </div>
-        <span class="ffa-count"><?= $total ?> faces &mdash; page <?= $page ?> of <?= max(1,$pages) ?></span>
+        <span class="ffa-count"><?= $total ?> faces - page <?= $page ?> of <?= max(1,$pages) ?></span>
     </div>
 
     <?php if (isset($saved_id)): ?>
     <div class="ffa-flash">Saved.</div>
     <?php endif ?>
 
+    <?php if (isset($today_set_id)): ?>
+    <div class="ffa-flash ffa-flash--today">Today's face updated.</div>
+    <?php endif ?>
+
     <!-- Face rows -->
     <?php foreach ($rows as $row):
         $is_excluded = $row['face_type'] === 'excluded';
+        $is_today    = $row['id'] === $today_face_id;
     ?>
-    <div class="ffa-row <?= $is_excluded ? 'ffa-row--excluded' : '' ?>" id="row-<?= $row['id'] ?>">
+    <div class="ffa-row <?= $is_excluded ? 'ffa-row--excluded' : '' ?> <?= $is_today ? 'ffa-row--today' : '' ?>" id="row-<?= $row['id'] ?>">
 
         <!-- Thumbnail -->
         <div class="ffa-thumb">
             <img src="photos/<?= htmlspecialchars($row['filename']) ?>"
                  alt="<?= htmlspecialchars($row['title']) ?>">
+            <?php if ($is_today): ?>
+            <span class="ffa-today-badge">Today</span>
+            <?php endif ?>
         </div>
 
         <!-- Edit form -->
@@ -214,18 +235,32 @@ $type_options = [
             </div>
         </form>
 
-        <!-- Exclude / Restore -->
-        <form class="ffa-exclude-form" method="POST">
-            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-            <?php if ($is_excluded): ?>
-                <input type="hidden" name="action" value="restore">
-                <button type="submit" class="btn btn-secondary ffa-exclude-btn">Restore</button>
+        <!-- Right-side action buttons: Set Today + Exclude/Restore -->
+        <div class="ffa-side-actions">
+
+            <?php if (!$is_today): ?>
+            <form method="POST">
+                <input type="hidden" name="action" value="set_today">
+                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                <button type="submit" class="btn btn-secondary ffa-today-btn">Set as Today</button>
+            </form>
             <?php else: ?>
-                <input type="hidden" name="action" value="exclude">
-                <button type="submit" class="btn btn-secondary ffa-exclude-btn ffa-exclude-btn--danger"
-                        onclick="return confirm('Exclude this face from the gallery?')">Exclude</button>
+            <span class="ffa-today-label">Today's face</span>
             <?php endif ?>
-        </form>
+
+            <form method="POST">
+                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                <?php if ($is_excluded): ?>
+                    <input type="hidden" name="action" value="restore">
+                    <button type="submit" class="btn btn-secondary ffa-exclude-btn">Restore</button>
+                <?php else: ?>
+                    <input type="hidden" name="action" value="exclude">
+                    <button type="submit" class="btn btn-secondary ffa-exclude-btn ffa-exclude-btn--danger"
+                            onclick="return confirm('Exclude this face from the gallery?')">Exclude</button>
+                <?php endif ?>
+            </form>
+
+        </div>
 
     </div>
     <?php endforeach ?>
@@ -234,11 +269,11 @@ $type_options = [
     <?php if ($pages > 1): ?>
     <div class="ffa-pagination">
         <?php if ($page > 1): ?>
-            <a href="?filter=<?= $filter ?>&p=<?= $page-1 ?>" class="btn btn-secondary">← Prev</a>
+            <a href="?filter=<?= $filter ?>&p=<?= $page-1 ?>" class="btn btn-secondary">&larr; Prev</a>
         <?php endif ?>
         <span class="ffa-page-info">Page <?= $page ?> of <?= $pages ?></span>
         <?php if ($page < $pages): ?>
-            <a href="?filter=<?= $filter ?>&p=<?= $page+1 ?>" class="btn btn-secondary">Next →</a>
+            <a href="?filter=<?= $filter ?>&p=<?= $page+1 ?>" class="btn btn-secondary">Next &rarr;</a>
         <?php endif ?>
     </div>
     <?php endif ?>
