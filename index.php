@@ -304,7 +304,6 @@ var FF_IMAGES_PATH    = '<?= IMAGES_PATH ?>';
 var FF_RANDOM_CURRENT = <?= json_encode($random) ?>;
 var FF_TODAY          = <?= json_encode($today) ?>;
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="foodfaces.js"></script>
 
 </body>

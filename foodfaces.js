@@ -50,8 +50,7 @@
                 (caption ? '<p class="ff-share__card-caption">' + escHtml(caption) + '</p>' : '') +
                 '<p class="ff-share__card-meta">' +
                     'Food Faces - an archive of edible portraits - ' +
-                    '<a class="ff-share__card-link" href="https://projects.tobyziegler.com/foodfaces/" target="_blank">' +
-                    'projects.tobyziegler.com/foodfaces</a>' +
+                    'projects.tobyziegler.com/foodfaces' +
                 '</p>' +
             '</div>';
     }
@@ -66,20 +65,147 @@
     if (FF_RANDOM_CURRENT) renderShareCard(shareCardRandom, FF_RANDOM_CURRENT);
 
 
-    // -- Copy / Download shared logic -------------------------
+    // -- Canvas rendering (replaces html2canvas) --------------
+    //
+    // Draws the share card directly onto a canvas using the already-loaded
+    // img element inside cardEl. No DOM cloning, no CORS issues, no scroll
+    // offset problems. Layout: photo on top, white body with title/caption/meta below.
 
-    function captureCard(cardEl, callback) {
-        if (!cardEl) return;
-        if (typeof html2canvas === 'undefined') {
-            alert('Image capture not available - try the Download button.');
-            return;
-        }
-        html2canvas(cardEl, { useCORS: true, scale: 2 }).then(function(canvas) {
-            callback(canvas);
-        }).catch(function() {
-            alert('Capture failed. The image may be blocked by CORS. Try Download instead.');
+    var CARD_WIDTH   = 900;   // output canvas px
+    var CARD_PADDING = 36;
+    var BODY_BG      = '#FAF7F2';   // --white-soft
+    var TEXT_DARK    = '#2C1F14';   // --text
+    var TEXT_MUTED   = '#6B5744';   // --text-muted
+    var FONT_DISPLAY = 'bold 28px Lora, Georgia, serif';
+    var FONT_CAPTION = '22px "DM Sans", sans-serif';
+    var FONT_META    = '18px "DM Sans", sans-serif';
+
+    function buildCanvas(cardEl, face) {
+        // Returns a Promise resolving to a canvas.
+        return new Promise(function(resolve, reject) {
+            var imgEl = cardEl.querySelector('img');
+            if (!imgEl) return reject('no img in card');
+
+            // Use the already-decoded image element directly - no fetch, no CORS.
+            var photo = new Image();
+            photo.crossOrigin = 'anonymous';
+
+            photo.onload = function() {
+                // Photo dimensions scaled to CARD_WIDTH
+                var photoH = Math.round(CARD_WIDTH * photo.naturalHeight / photo.naturalWidth);
+
+                // Measure text to calculate body height
+                var cv0  = document.createElement('canvas');
+                var ctx0 = cv0.getContext('2d');
+
+                ctx0.font = FONT_DISPLAY;
+                var titleLines  = wrapText(ctx0, face.title || '', CARD_WIDTH - CARD_PADDING * 2);
+
+                ctx0.font = FONT_CAPTION;
+                var captionLines = face.caption
+                    ? wrapText(ctx0, face.caption, CARD_WIDTH - CARD_PADDING * 2)
+                    : [];
+
+                ctx0.font = FONT_META;
+                var metaLines = wrapText(ctx0, 'Food Faces - projects.tobyziegler.com/foodfaces', CARD_WIDTH - CARD_PADDING * 2);
+
+                var lineH      = 36;
+                var sectionGap = 16;
+                var bodyH      = CARD_PADDING
+                    + titleLines.length   * lineH
+                    + (captionLines.length ? sectionGap + captionLines.length * lineH : 0)
+                    + sectionGap
+                    + metaLines.length    * lineH
+                    + CARD_PADDING;
+
+                var totalH = photoH + bodyH;
+
+                var cv  = document.createElement('canvas');
+                cv.width  = CARD_WIDTH;
+                cv.height = totalH;
+                var ctx = cv.getContext('2d');
+
+                // Photo
+                ctx.drawImage(photo, 0, 0, CARD_WIDTH, photoH);
+
+                // Body background
+                ctx.fillStyle = BODY_BG;
+                ctx.fillRect(0, photoH, CARD_WIDTH, bodyH);
+
+                var y = photoH + CARD_PADDING;
+
+                // Title
+                ctx.fillStyle = TEXT_DARK;
+                ctx.font      = FONT_DISPLAY;
+                titleLines.forEach(function(line) {
+                    ctx.fillText(line, CARD_PADDING, y);
+                    y += lineH;
+                });
+
+                // Caption
+                if (captionLines.length) {
+                    y += sectionGap;
+                    ctx.fillStyle = TEXT_MUTED;
+                    ctx.font      = FONT_CAPTION;
+                    captionLines.forEach(function(line) {
+                        ctx.fillText(line, CARD_PADDING, y);
+                        y += lineH;
+                    });
+                }
+
+                // Meta
+                y += sectionGap;
+                ctx.fillStyle = TEXT_MUTED;
+                ctx.font      = FONT_META;
+                metaLines.forEach(function(line) {
+                    ctx.fillText(line, CARD_PADDING, y);
+                    y += lineH;
+                });
+
+                resolve(cv);
+            };
+
+            photo.onerror = function() {
+                reject('image load failed');
+            };
+
+            // src must be set after onload/onerror are assigned
+            photo.src = imgEl.src;
+
+            // If the image is already decoded (cached), onload may not fire in some
+            // browsers - nudge it by checking complete after assigning src.
+            if (photo.complete && photo.naturalWidth) photo.onload();
         });
     }
+
+    // Wraps text to fit maxWidth, returns array of lines.
+    function wrapText(ctx, text, maxWidth) {
+        var words = text.split(' ');
+        var lines = [];
+        var line  = '';
+        for (var i = 0; i < words.length; i++) {
+            var test = line ? line + ' ' + words[i] : words[i];
+            if (ctx.measureText(test).width > maxWidth && line) {
+                lines.push(line);
+                line = words[i];
+            } else {
+                line = test;
+            }
+        }
+        if (line) lines.push(line);
+        return lines.length ? lines : [''];
+    }
+
+    function canvasToBlob(canvas) {
+        return new Promise(function(resolve, reject) {
+            canvas.toBlob(function(blob) {
+                blob ? resolve(blob) : reject('toBlob failed');
+            }, 'image/png');
+        });
+    }
+
+
+    // -- Copy / Download shared logic -------------------------
 
     function wireButtons(copyBtnId, downloadBtnId, cardEl, getFace) {
         var copyBtn     = document.getElementById(copyBtnId);
@@ -87,36 +213,101 @@
 
         if (copyBtn) {
             copyBtn.addEventListener('click', function() {
-                captureCard(cardEl, function(canvas) {
-                    canvas.toBlob(function(blob) {
-                        if (!navigator.clipboard || !navigator.clipboard.write) {
-                            alert('Clipboard API not available in this browser. Try Download instead.');
-                            return;
-                        }
-                        var item = new ClipboardItem({ 'image/png': blob });
-                        navigator.clipboard.write([item]).then(function() {
-                            copyBtn.textContent = 'Copied!';
-                            setTimeout(function() { copyBtn.textContent = 'Copy image'; }, 2000);
-                        }).catch(function() {
-                            alert('Copy failed. Try Download instead.');
-                        });
+                // Disable immediately to prevent queued clicks during async work
+                copyBtn.disabled    = true;
+                copyBtn.textContent = 'Working...';
+
+                var face = getFace();
+                if (!face) {
+                    copyBtn.disabled    = false;
+                    copyBtn.textContent = 'Copy image';
+                    return;
+                }
+
+                buildCanvas(cardEl, face).then(canvasToBlob).then(function(blob) {
+
+                    if (!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem === 'undefined') {
+                        // Clipboard API unavailable - show fallback modal
+                        return buildCanvas(cardEl, face).then(showCopyFallback);
+                    }
+
+                    var item = new ClipboardItem({ 'image/png': blob });
+                    return navigator.clipboard.write([item]).then(function() {
+                        copyBtn.textContent = 'Copied!';
+                        setTimeout(function() { copyBtn.textContent = 'Copy image'; }, 2000);
+                    }).catch(function(err) {
+                        console.error('clipboard.write failed:', err);
+                        return buildCanvas(cardEl, face).then(showCopyFallback);
                     });
+
+                }).catch(function(err) {
+                    console.error('canvas build failed:', err);
+                    alert('Could not prepare image. Try Download instead.');
+                }).then(function() {
+                    copyBtn.disabled    = false;
+                    if (copyBtn.textContent === 'Working...') {
+                        copyBtn.textContent = 'Copy image';
+                    }
                 });
             });
         }
 
         if (downloadBtn) {
             downloadBtn.addEventListener('click', function() {
-                captureCard(cardEl, function(canvas) {
-                    var face     = getFace();
-                    var filename = face ? 'foodface-' + escHtml(face.filename) + '.png' : 'foodface-share.png';
+                downloadBtn.disabled    = true;
+                downloadBtn.textContent = 'Working...';
+
+                var face = getFace();
+                if (!face) {
+                    downloadBtn.disabled    = false;
+                    downloadBtn.textContent = 'Download';
+                    return;
+                }
+
+                buildCanvas(cardEl, face).then(function(canvas) {
+                    var filename = 'foodface-' + escHtml(face.filename) + '.png';
                     var link     = document.createElement('a');
                     link.download = filename;
                     link.href     = canvas.toDataURL('image/png');
                     link.click();
+                }).catch(function(err) {
+                    console.error('canvas build failed:', err);
+                    alert('Could not prepare image for download.');
+                }).then(function() {
+                    downloadBtn.disabled    = false;
+                    downloadBtn.textContent = 'Download';
                 });
             });
         }
+    }
+
+
+    // -- Copy fallback modal ----------------------------------
+    // Shown when clipboard.write is unavailable or rejected.
+    // Receives an already-built canvas - no second capture needed.
+
+    function showCopyFallback(canvas) {
+        var dataUrl = canvas.toDataURL('image/png');
+
+        var overlay = document.createElement('div');
+        overlay.className = 'ff-copy-overlay';
+        overlay.innerHTML =
+            '<div class="ff-copy-modal">' +
+                '<p class="ff-copy-modal__hint">Your browser blocked direct copy.<br>' +
+                'Long-press or right-click the image below, then choose <strong>Copy Image</strong>.</p>' +
+                '<img class="ff-copy-modal__img" src="' + dataUrl + '" alt="Share card">' +
+                '<button class="btn btn-secondary ff-copy-modal__close">Close</button>' +
+            '</div>';
+
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('.ff-copy-modal__close').addEventListener('click', function() {
+            document.body.removeChild(overlay);
+        });
+
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) document.body.removeChild(overlay);
+        });
     }
 
     // Wire today's card buttons

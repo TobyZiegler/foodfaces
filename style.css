@@ -407,3 +407,53 @@
     font-size: var(--text-sm);
     color: var(--text-muted);
 }
+
+/* ============================================================
+   COPY FALLBACK MODAL
+   Shown on browsers that block clipboard.write (mainly Safari).
+   User can long-press or right-click the rendered image to copy.
+   ============================================================ */
+
+.ff-copy-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 31, 20, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.ff-copy-modal {
+    background: var(--white-soft);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    max-width: 540px;
+    width: 100%;
+    box-shadow: var(--shadow-lift);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ff-copy-modal__hint {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: 1.6;
+    text-align: center;
+}
+
+.ff-copy-modal__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+}
+
+.ff-copy-modal__close {
+    align-self: center;
+}
