@@ -117,7 +117,7 @@ HTML;
         <a href="https://tobyziegler.com" class="nav-link">The Study</a>
         <a href="https://projects.tobyziegler.com" class="nav-link">Projects</a>
         <a href="https://dadabase.tobyziegler.com" class="nav-link">Dad-a-Base</a>
-        <a href="https://resume.tobyziegler.com" class="nav-link">Resume</a>
+        <a href="https://resume.tobyziegler.com" class="nav-link">R&eacute;sum&eacute;</a>
     </nav>
 </header>
 
@@ -163,33 +163,35 @@ HTML;
             <button class="btn btn-secondary ff-random-btn" id="js-new-random">Another one &rarr;</button>
         </div>
 
-        <!-- Row 2, col 1+2: Pair explanation + both figures -->
-        <div class="ff-hero__pair-row">
+        <!-- Row 2, col 1-3: Pair note, full width -->
+        <div class="ff-hero__pair-note-row">
             <p class="ff-hero__pair-note">Each face was a real meal, consumed that day. The face on the left became the meal on the right. True for every face with a cottage cheese background.</p>
-            <div class="ff-hero__pair-figures">
-                <?php if ($hero): ?>
-                <figure class="ff-hero__face">
-                    <img src="<?= img_url($hero['filename']) ?>" alt="<?= face_title($hero) ?>">
-                    <figcaption>
-                        <strong><?= face_title($hero) ?></strong>
-                        <?php if (face_caption($hero)): ?>
-                        <span><?= face_caption($hero) ?></span>
-                        <?php endif; ?>
-                    </figcaption>
-                </figure>
-                <?php endif; ?>
-                <?php if ($reveal): ?>
-                <figure class="ff-hero__reveal">
-                    <img src="<?= img_url($reveal['filename']) ?>" alt="<?= face_title($reveal) ?>">
-                    <figcaption>
-                        <strong><?= face_title($reveal) ?></strong>
-                        <?php if (face_caption($reveal)): ?>
-                        <span><?= face_caption($reveal) ?></span>
-                        <?php endif; ?>
-                    </figcaption>
-                </figure>
-                <?php endif; ?>
-            </div>
+        </div>
+
+        <!-- Row 3, col 1-3: Hero face + reveal, two equal halves across full width -->
+        <div class="ff-hero__pair-figures">
+            <?php if ($hero): ?>
+            <figure class="ff-hero__face">
+                <img src="<?= img_url($hero['filename']) ?>" alt="<?= face_title($hero) ?>">
+                <figcaption>
+                    <strong><?= face_title($hero) ?></strong>
+                    <?php if (face_caption($hero)): ?>
+                    <span><?= face_caption($hero) ?></span>
+                    <?php endif; ?>
+                </figcaption>
+            </figure>
+            <?php endif; ?>
+            <?php if ($reveal): ?>
+            <figure class="ff-hero__reveal">
+                <img src="<?= img_url($reveal['filename']) ?>" alt="<?= face_title($reveal) ?>">
+                <figcaption>
+                    <strong><?= face_title($reveal) ?></strong>
+                    <?php if (face_caption($reveal)): ?>
+                    <span><?= face_caption($reveal) ?></span>
+                    <?php endif; ?>
+                </figcaption>
+            </figure>
+            <?php endif; ?>
         </div>
 
     </div><!-- /.ff-hero__inner -->

@@ -15,58 +15,65 @@
     padding-bottom: 3rem;
 }
 
-/* 3-column grid, 2 rows:
-   Row 1, col 1-2: story copy
-   Row 1-2, col 3: random face (spans both rows)
-   Row 2, col 1-2: pair explanation + both figures side by side */
+/* 6-column grid, 3 rows:
+   Row 1, col 1-4: story copy | col 5-6: random face
+   Row 2, col 1-6: pair note, full width
+   Row 3, col 1-3: hero face | col 4-6: reveal - true equal halves */
 .ff-hero__inner {
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto auto auto;
     gap: 2rem 2.5rem;
     align-items: start;
 }
 
-/* Row 1, col 1+2 */
+/* Row 1, col 1-4 */
 .ff-hero__story {
-    grid-column: 1 / 3;
+    grid-column: 1 / 5;
     grid-row: 1;
 }
 
-/* Row 1+2, col 3 - spans both rows */
+/* Row 1, col 5-6 */
 .ff-hero__random {
-    grid-column: 3;
-    grid-row: 1 / 3;
+    grid-column: 5 / 7;
+    grid-row: 1;
     align-self: start;
 }
 
-/* Row 2, col 1+2 - pair explanation + both figures */
-.ff-hero__pair-row {
-    grid-column: 1 / 3;
+/* Row 2, col 1-6 - full width pair note */
+.ff-hero__pair-note-row {
+    grid-column: 1 / 7;
     grid-row: 2;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--rule);
 }
 
 .ff-hero__pair-note {
     font-size: var(--text-sm);
     color: var(--text-muted);
     font-style: italic;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--rule);
-}
-
-/* Two figures side by side across the full pair-row width */
-.ff-hero__pair-figures {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
-.ff-hero__face,
-.ff-hero__reveal {
     margin: 0;
+}
+
+/* Row 3 - hero face col 1-3, reveal col 4-6: true equal halves */
+.ff-hero__face {
+    grid-column: 1 / 4;
+    grid-row: 3;
+    margin: 0;
+}
+
+.ff-hero__reveal {
+    grid-column: 4 / 7;
+    grid-row: 3;
+    margin: 0;
+}
+
+/* ff-hero__pair-figures wrapper not needed in this approach;
+   kept as a no-op passthrough so PHP template stays unchanged */
+.ff-hero__pair-figures {
+    display: contents;
 }
 
 /* Story copy - h1 color handled by class="green" in HTML */
@@ -140,13 +147,24 @@
 
     .ff-hero__story,
     .ff-hero__random,
-    .ff-hero__pair-row {
+    .ff-hero__pair-note-row,
+    .ff-hero__face,
+    .ff-hero__reveal {
         grid-column: 1;
         grid-row: auto;
     }
 
-    .ff-hero__pair-figures {
-        grid-template-columns: 1fr 1fr;   /* keep side by side even on mobile - they're paired */
+    /* Keep figures side by side on mobile - they're a matched pair */
+    .ff-hero__face {
+        display: inline-block;
+        width: calc(50% - 0.75rem);
+        vertical-align: top;
+    }
+
+    .ff-hero__reveal {
+        display: inline-block;
+        width: calc(50% - 0.75rem);
+        vertical-align: top;
     }
 }
 
